@@ -31,3 +31,15 @@ build/
 
 ### VS Code ###
 .vscode/
+
+#Log
+logs/
+*.log
+
+#Maven wrapper
+.mvn/
+mvnw
+mvnw.cmd
+
+#Config
+src/main/resources/application.properties
