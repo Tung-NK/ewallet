@@ -43,3 +43,5 @@ mvnw.cmd
 
 #Config
 src/main/resources/application.properties
+src/main/resources/db/schema.sql
+**/package-info.java
