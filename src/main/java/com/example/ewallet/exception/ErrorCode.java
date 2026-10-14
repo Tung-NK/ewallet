@@ -13,7 +13,10 @@ public enum ErrorCode {
             "Không có quyền truy cập tài nguyên"),
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,
-            "Lỗi hệ thống");
+            "Lỗi hệ thống"),
+
+    USER_ALREADY_EXISTS(HttpStatus.CONFLICT,
+            "Email hoặc số điện thoại đã được đăng ký");
 
     private final HttpStatus httpStatus;
     private final String defaultMessage;

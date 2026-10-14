@@ -2,9 +2,12 @@ package com.example.ewallet.controller;
 
 import com.example.ewallet.dto.response.ApiResponse;
 import com.example.ewallet.dto.response.LoginResponse;
+import com.example.ewallet.dto.response.UserResponse;
 import com.example.ewallet.form.LoginForm;
+import com.example.ewallet.form.RegisterForm;
 import com.example.ewallet.service.AuthService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,5 +28,11 @@ public class AuthController {
 
         LoginResponse data = authService.login(form);
         return ResponseEntity.ok(ApiResponse.success("Đăng nhập thành công", data));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<UserResponse>> register(@Valid @RequestBody RegisterForm form) {
+        UserResponse data = authService.register(form);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Đăng ký thành công", data));
     }
 }

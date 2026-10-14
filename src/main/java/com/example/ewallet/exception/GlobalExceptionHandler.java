@@ -4,6 +4,7 @@ import com.example.ewallet.dto.response.ApiResponse;
 import com.example.ewallet.dto.response.FieldErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -56,6 +57,36 @@ public class GlobalExceptionHandler {
                 fieldErrors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    /**
+     * Bắt lỗi vi phạm ràng buộc DB (UNIQUE, CHECK, FK).
+     *
+     * <p>Trong chức năng Register, nguyên nhân duy nhất có thể xảy ra là
+     * UNIQUE trùng email/phone (race condition khi 2 request cùng đăng ký
+     * cùng 1 email/phone trong tích tắc).
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolation(
+            DataIntegrityViolationException ex) {
+
+        String cause = ex.getMostSpecificCause().getMessage();
+        log.warn("Data integrity violation: {}", cause);
+
+        boolean isUniqueViolation = cause != null
+                && (cause.contains("uk_users_email") || cause.contains("uk_users_phone"));
+
+        if (isUniqueViolation) {
+            ApiResponse<Void> body = ApiResponse.error(
+                    ErrorCode.USER_ALREADY_EXISTS.getDefaultMessage(),
+                    ErrorCode.USER_ALREADY_EXISTS.name());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+        }
+
+        ApiResponse<Void> body = ApiResponse.error(
+                ErrorCode.INTERNAL_SERVER_ERROR.getDefaultMessage(),
+                ErrorCode.INTERNAL_SERVER_ERROR.name());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
 
     /**
