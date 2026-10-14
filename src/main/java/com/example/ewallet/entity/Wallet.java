@@ -38,8 +38,8 @@ public class Wallet {
     public Wallet() {
     }
 
-    public Wallet(Long id) {
-        this.id = id;
+    public Wallet(Long userId) {
+        this.userId = userId;
     }
 
     // Lifecycle callbacks

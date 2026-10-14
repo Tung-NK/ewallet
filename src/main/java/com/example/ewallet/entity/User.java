@@ -14,7 +14,7 @@ public class User {
     private Long id;
 
     @Column(name = "full_name", nullable = false, length = 100)
-    private String fullname;
+    private String fullName;
 
     @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
@@ -46,15 +46,14 @@ public class User {
     public User() {
     }
 
-    public User(String fullname, String email, String phone, String passwordHash) {
-        this.fullname = fullname;
+    public User(String fullName, String email, String phone, String passwordHash) {
+        this.fullName = fullName;
         this.email = email;
         this.phone = phone;
         this.passwordHash = passwordHash;
     }
 
     // Lifecycle callbacks
-
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
@@ -86,12 +85,12 @@ public class User {
         this.id = id;
     }
 
-    public String getFullname() {
-        return fullname;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getEmail() {
