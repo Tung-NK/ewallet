@@ -16,7 +16,13 @@ public enum ErrorCode {
             "Lỗi hệ thống"),
 
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT,
-            "Email hoặc số điện thoại đã được đăng ký");
+            "Email hoặc số điện thoại đã được đăng ký"),
+
+    AUTH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED,
+            "Token đã hết hạn"),
+
+    AUTH_TOKEN_INVALID(HttpStatus.UNAUTHORIZED,
+            "Token không hợp lệ");
 
     private final HttpStatus httpStatus;
     private final String defaultMessage;

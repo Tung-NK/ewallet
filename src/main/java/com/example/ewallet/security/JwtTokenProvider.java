@@ -1,5 +1,10 @@
 package com.example.ewallet.security;
 
+import com.example.ewallet.exception.BusinessException;
+import com.example.ewallet.exception.ErrorCode;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -70,6 +75,29 @@ public class JwtTokenProvider {
                 .expiration(Date.from(expiry))
                 .signWith(signingKey)
                 .compact();
+    }
+
+    public Long parseRefreshTokenAndGetUserId(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(signingKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+            String type = claims.get(CLAIM_TYPE, String.class);
+            if (!TYPE_REFRESH.equals(type)) {
+                throw new BusinessException(ErrorCode.AUTH_TOKEN_INVALID);
+            }
+
+            return Long.parseLong(claims.getSubject());
+        } catch (ExpiredJwtException ex) {
+            throw new BusinessException(ErrorCode.AUTH_TOKEN_EXPIRED);
+        } catch (BusinessException ex) {
+            throw ex;
+        } catch (JwtException | IllegalArgumentException ex) {
+            throw new BusinessException(ErrorCode.AUTH_TOKEN_INVALID);
+        }
     }
 
     public long getAccessTokenExpirationSeconds() {

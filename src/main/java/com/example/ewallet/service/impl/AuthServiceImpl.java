@@ -1,6 +1,7 @@
 package com.example.ewallet.service.impl;
 
 import com.example.ewallet.dto.response.LoginResponse;
+import com.example.ewallet.dto.response.RefreshTokenResponse;
 import com.example.ewallet.dto.response.UserResponse;
 import com.example.ewallet.entity.User;
 import com.example.ewallet.entity.UserStatus;
@@ -8,6 +9,7 @@ import com.example.ewallet.entity.Wallet;
 import com.example.ewallet.exception.BusinessException;
 import com.example.ewallet.exception.ErrorCode;
 import com.example.ewallet.form.LoginForm;
+import com.example.ewallet.form.RefreshTokenForm;
 import com.example.ewallet.form.RegisterForm;
 import com.example.ewallet.repository.UserRepository;
 import com.example.ewallet.repository.WalletRepository;
@@ -59,8 +61,6 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtTokenProvider.generateAccessToken(user.getId(), user.getEmail(), user.getRole().name());
         String refreshToken = jwtTokenProvider.generateRefreshToken(user.getId(), user.getEmail());
 
-        log.info("User logged in: id={}", user.getId());
-
         return new LoginResponse(
                 accessToken, refreshToken, TOKEN_TYPE_BEARER, jwtTokenProvider.getAccessTokenExpirationSeconds()
         );
@@ -90,5 +90,25 @@ public class AuthServiceImpl implements AuthService {
         walletRepository.save(wallet);
 
         return UserMapper.toResponse(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RefreshTokenResponse refreshToken(RefreshTokenForm form) {
+        Long userId = jwtTokenProvider.parseRefreshTokenAndGetUserId(form.getRefreshToken());
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.AUTH_TOKEN_INVALID));
+
+        if (user.getStatus() == UserStatus.LOCKED) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "Tài khoản đã bị khóa");
+        }
+
+        String newAccessToken = jwtTokenProvider.generateAccessToken(user.getId(), user.getEmail(), user.getRole().name());
+
+        return new RefreshTokenResponse(
+                newAccessToken,
+                TOKEN_TYPE_BEARER,
+                jwtTokenProvider.getAccessTokenExpirationSeconds()
+        );
     }
 }
