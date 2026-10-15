@@ -2,8 +2,10 @@ package com.example.ewallet.controller;
 
 import com.example.ewallet.dto.response.ApiResponse;
 import com.example.ewallet.dto.response.LoginResponse;
+import com.example.ewallet.dto.response.RefreshTokenResponse;
 import com.example.ewallet.dto.response.UserResponse;
 import com.example.ewallet.form.LoginForm;
+import com.example.ewallet.form.RefreshTokenForm;
 import com.example.ewallet.form.RegisterForm;
 import com.example.ewallet.service.AuthService;
 import jakarta.validation.Valid;
@@ -34,5 +36,11 @@ public class AuthController {
     public ResponseEntity<ApiResponse<UserResponse>> register(@Valid @RequestBody RegisterForm form) {
         UserResponse data = authService.register(form);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Đăng ký thành công", data));
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<ApiResponse<RefreshTokenResponse>> refreshToken(@Valid @RequestBody RefreshTokenForm form) {
+        RefreshTokenResponse data = authService.refreshToken(form);
+        return ResponseEntity.ok(ApiResponse.success("Làm mới token thành công", data));
     }
 }
