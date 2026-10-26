@@ -22,7 +22,10 @@ public enum ErrorCode {
             "Token đã hết hạn"),
 
     AUTH_TOKEN_INVALID(HttpStatus.UNAUTHORIZED,
-            "Token không hợp lệ");
+            "Token không hợp lệ"),
+
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND,
+            "Không tìm thấy người dùng");
 
     private final HttpStatus httpStatus;
     private final String defaultMessage;

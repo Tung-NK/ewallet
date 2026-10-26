@@ -77,7 +77,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public Long parseRefreshTokenAndGetUserId(String token) {
+    public Long parseRefreshTokenAndGetUserId(String token) { // phân tích refreshToken và lấy id
         try {
             Claims claims = Jwts.parser()
                     .verifyWith(signingKey)
@@ -91,6 +91,33 @@ public class JwtTokenProvider {
             }
 
             return Long.parseLong(claims.getSubject());
+        } catch (ExpiredJwtException ex) {
+            throw new BusinessException(ErrorCode.AUTH_TOKEN_EXPIRED);
+        } catch (BusinessException ex) {
+            throw ex;
+        } catch (JwtException | IllegalArgumentException ex) {
+            throw new BusinessException(ErrorCode.AUTH_TOKEN_INVALID);
+        }
+    }
+
+    public JwtPayload parseAccessToken(String token) { // phân tích refreshToken
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(signingKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+            String type = claims.get(CLAIM_TYPE, String.class);
+            if (!TYPE_ACCESS.equals(type)) {
+                throw new BusinessException(ErrorCode.AUTH_TOKEN_INVALID);
+            }
+
+            Long userId = Long.parseLong(claims.getSubject());
+            String email = claims.get(CLAIM_EMAIL, String.class);
+            String role = claims.get(CLAIM_ROLE, String.class);
+
+            return new JwtPayload(userId, email, role);
         } catch (ExpiredJwtException ex) {
             throw new BusinessException(ErrorCode.AUTH_TOKEN_EXPIRED);
         } catch (BusinessException ex) {
