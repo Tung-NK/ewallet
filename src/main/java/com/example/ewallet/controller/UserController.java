@@ -2,6 +2,8 @@ package com.example.ewallet.controller;
 
 import com.example.ewallet.dto.response.ApiResponse;
 import com.example.ewallet.dto.response.UserResponse;
+import com.example.ewallet.form.ChangePinForm;
+import com.example.ewallet.form.SetPinForm;
 import com.example.ewallet.form.UpdateProfileForm;
 import com.example.ewallet.service.UserService;
 import jakarta.validation.Valid;
@@ -29,5 +31,21 @@ public class UserController {
 
         UserResponse data = userService.updateCurrentProfile(form);
         return ResponseEntity.ok(ApiResponse.success("Cập nhật thành công", data));
+    }
+
+    @PostMapping("/me/pin")
+    public ResponseEntity<ApiResponse<Void>> setPin(
+            @Valid @RequestBody SetPinForm form) {
+
+        userService.setPin(form);
+        return ResponseEntity.ok(ApiResponse.success("Đặt mã PIN thành công", null));
+    }
+
+    @PutMapping("/me/pin")
+    public ResponseEntity<ApiResponse<Void>> changePin(
+            @Valid @RequestBody ChangePinForm form) {
+
+        userService.changePin(form);
+        return ResponseEntity.ok(ApiResponse.success("Đổi mã PIN thành công", null));
     }
 }

@@ -25,7 +25,16 @@ public enum ErrorCode {
             "Token không hợp lệ"),
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,
-            "Không tìm thấy người dùng");
+            "Không tìm thấy người dùng"),
+
+    PIN_ALREADY_SET(HttpStatus.CONFLICT,
+            "Bạn đã có mã PIN, vui lòng đổi mã PIN"),
+
+    PIN_NOT_SET(HttpStatus.UNPROCESSABLE_ENTITY,
+            "Bạn chưa đặt mã PIN, vui lòng đặt mã PIN"),
+
+    INVALID_PIN(HttpStatus.UNAUTHORIZED,
+            "Mã PIN không đúng");
 
     private final HttpStatus httpStatus;
     private final String defaultMessage;
