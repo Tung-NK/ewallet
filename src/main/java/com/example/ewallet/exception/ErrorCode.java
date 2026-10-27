@@ -34,7 +34,10 @@ public enum ErrorCode {
             "Bạn chưa đặt mã PIN, vui lòng đặt mã PIN"),
 
     INVALID_PIN(HttpStatus.UNAUTHORIZED,
-            "Mã PIN không đúng");
+            "Mã PIN không đúng"),
+
+    WALLET_NOT_FOUND(HttpStatus.NOT_FOUND,
+            "Không tìm thấy ví"),;
 
     private final HttpStatus httpStatus;
     private final String defaultMessage;
