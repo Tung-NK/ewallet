@@ -37,7 +37,13 @@ public enum ErrorCode {
             "Mã PIN không đúng"),
 
     WALLET_NOT_FOUND(HttpStatus.NOT_FOUND,
-            "Không tìm thấy ví"),;
+            "Không tìm thấy ví"),
+
+    WALLET_INACTIVE(HttpStatus.UNPROCESSABLE_ENTITY,
+            "Ví đã bị khóa hoặc vô hiệu hóa"),
+
+    TOPUP_LIMIT_EXCEEDED(HttpStatus.UNPROCESSABLE_ENTITY,
+            "Số tiền nạp vượt quá hạn mức cho phép");
 
     private final HttpStatus httpStatus;
     private final String defaultMessage;

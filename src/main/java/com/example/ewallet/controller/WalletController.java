@@ -1,12 +1,13 @@
 package com.example.ewallet.controller;
 
 import com.example.ewallet.dto.response.ApiResponse;
+import com.example.ewallet.dto.response.TopupResponse;
 import com.example.ewallet.dto.response.WalletBalanceResponse;
+import com.example.ewallet.form.TopupForm;
 import com.example.ewallet.service.WalletService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/wallet")
@@ -23,4 +24,11 @@ public class WalletController {
         return ResponseEntity.ok(ApiResponse.success("Lấy số dư thành công", data));
     }
 
+    @PostMapping("/topup")
+    public ResponseEntity<ApiResponse<TopupResponse>> topup(
+            @Valid @RequestBody TopupForm form) {
+
+        TopupResponse data = walletService.topup(form);
+        return ResponseEntity.ok(ApiResponse.success("Nạp tiền thành công", data));
+    }
 }
