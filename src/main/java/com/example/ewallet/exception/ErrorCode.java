@@ -43,7 +43,16 @@ public enum ErrorCode {
             "Ví đã bị khóa hoặc vô hiệu hóa"),
 
     TOPUP_LIMIT_EXCEEDED(HttpStatus.UNPROCESSABLE_ENTITY,
-            "Số tiền nạp vượt quá hạn mức cho phép");
+            "Số tiền nạp vượt quá hạn mức cho phép"),
+
+    WALLET_INSUFFICIENT_BALANCE(HttpStatus.UNPROCESSABLE_ENTITY,
+            "Số dư không đủ để thực hiện giao dịch"),
+
+    TRANSFER_LIMIT_EXCEEDED(HttpStatus.UNPROCESSABLE_ENTITY,
+            "Số tiền chuyển vượt quá hạn mức cho phép"),
+
+    TRANSFER_SAME_WALLET(HttpStatus.UNPROCESSABLE_ENTITY,
+            "Không thể chuyển tiền cho chính mình");
 
     private final HttpStatus httpStatus;
     private final String defaultMessage;
