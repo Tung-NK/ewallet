@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 
@@ -55,6 +56,30 @@ public class GlobalExceptionHandler {
                 ErrorCode.VALIDATION_ERROR.getDefaultMessage(),
                 ErrorCode.VALIDATION_ERROR.name(),
                 fieldErrors);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    /**
+     * Bắt lỗi khi query param không parse được (sai kiểu, sai enum, sai format ngày).
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<Void>> handleTypeMismatch(
+            MethodArgumentTypeMismatchException ex) {
+
+        String field = ex.getName();
+        String requiredType = ex.getRequiredType() != null
+                ? ex.getRequiredType().getSimpleName()
+                : "unknown";
+        String message = String.format(
+                "Tham số '%s' không đúng định dạng (yêu cầu: %s)", field, requiredType);
+
+        log.warn("Type mismatch: field={}, requiredType={}", field, requiredType);
+
+        ApiResponse<Void> body = ApiResponse.error(
+                ErrorCode.VALIDATION_ERROR.getDefaultMessage(),
+                ErrorCode.VALIDATION_ERROR.name(),
+                List.of(new FieldErrorResponse(field, message)));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
